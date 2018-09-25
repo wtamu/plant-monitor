@@ -1,0 +1,38 @@
+{% extends 'base.html' %}
+
+{% block plant_form %}
+    <div class="container">
+        <form method="post">
+
+            <label for="plant-dropdown">Plant Name: </label>
+            <select id="plant-dropdown" name="plant-selection">
+                <option selected id="plant-option" name="plant-option">Choose...</option>
+                {% for option in options %}
+                    <option name="{{ option }}">{{ option }}</option>
+                {% endfor %}
+            </select>
+
+            <script type="text/javascript">
+                $('select#plant-dropdown').on('change', function () {
+                     $.post("http://localhost:5006/bok", {plant_name: $(this).val()});
+                     $.post("/plants", {plant_name: $(this).val()}, function (plant) {
+                        $('.plant-details').html(`
+                            <img class="resize-img" src="/static/${plant.file}" alt="My Plant"/>
+                            <h5><em>${plant.genus} ${plant.species}</em></h5>
+                            <p>${plant.description}</p>
+                        `);
+                    });
+                });
+            </script>
+        </form>
+        <div class="plant-details"></div>
+    </div>
+{% endblock %}
+
+{% block waterpump %}{% endblock %}
+
+{% block bokeh_app %}
+    <div class="container">
+        {{ bokeh_script }}
+    </div>
+{% endblock %}
